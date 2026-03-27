@@ -42,4 +42,4 @@ Generated tests are saved automatically to
 `test_calculator.py`
 
 ## Tech Stack
-Python | LLaMA 3.2 | Ollama | argparse
+Python | LLaMA 3.2 | Ollama | argparse | Rich
