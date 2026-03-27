@@ -1,8 +1,11 @@
 import argparse
-
+from rich.console import Console
+from rich.panel import Panel
+from rich.syntax import Syntax
 import requests
 import json
 
+console = Console()
 
 def generate_tests(function_code:str) -> str:
     prompt = f"""
@@ -12,6 +15,8 @@ def generate_tests(function_code:str) -> str:
     Return only the test code ,nothing else.
     """
 
+
+    console.print("[yellow] Sending to LLaMA...[/yellow]")
 
     response = requests.post(
         "http://localhost:11434/api/generate",
@@ -45,14 +50,21 @@ if __name__ == "__main__":
     parser.add_argument("--file",required=True,help="Path to your Python file")
     args = parser.parse_args()
 
-    print(f"Reading file {args.file}")
+    console.print(Panel.fit(
+        "[bold green]PyTestGen [/bold green]\n"
+        "[dim]AI-powered unit test generator using local LLaMA[/dim]"
+    ))
     code  = read_file(args.file)
 
-    print("Generating the file")
+
     tests = generate_tests(code)
 
     output_file = "test_" + args.file
     with open(output_file, "w") as f:
         f.write(tests)
 
-    print(f"Tests saved to {output_file}")
+    console.print("\n[bold green]✅ Tests generated![/bold green]")
+    console.print(f"[cyan]💾 Saved to:[/cyan] {output_file}\n")
+
+    syntax = Syntax(tests, "python", theme="monokai", line_numbers=True)
+    console.print(Panel(syntax, title="Generated Tests", border_style="green"))
